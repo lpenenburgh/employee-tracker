@@ -11,3 +11,11 @@ role_id INT NOT NULL,
 manager_id INT
 PRIMARY KEY (id)
 );
+
+CREATE TABLE roles (
+    id INT AUTO_INCREMENT NOT NULL,
+    title VARCHAR(30) NOT NULL,
+    salary DECIMAL NOT NULL,
+    department_id INT,
+    PRIMARY KEY (id)
+);
