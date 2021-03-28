@@ -21,7 +21,7 @@ department_id INT
 
 CREATE TABLE departments(
 id INT AUTO_INCREMENT PRIMARY KEY,
-name VARCHAR(30)
+name VARCHAR(45)
 );
 
 SELECT * FROM employees_db;
