@@ -13,12 +13,12 @@ const connection = mysql.createConnection({
 const start = () => {
     inquirer.prompt({
         type: "list",
-        name: "method",
+        name: "task",
         message: "What would you like to do?",
         choices: ["Add Employee", "Add a Department", "Add a Role", "Update Employee Roles", "View All Employees", "View All Departments", "View All Roles", "Exit"]
     })
         .then((answer) => {
-            switch (answer.method) {
+            switch (answer.task) {
                 case "Add Employee":
                     addAnEmployee();
                     break;
@@ -26,7 +26,7 @@ const start = () => {
                     addADepartment();
                     break;
                 case "Add a Role":
-                    addRole();
+                    addARole();
                     break;
                 case "Update Employee Roles":
                     updateEmployee();
@@ -67,9 +67,9 @@ const addAnEmployee = async () => {
                 type: "rawlist",
                 name: "role_id",
                 message: "What is the Employee's role?",
-                choices: roles.map(role => ({
-                    name: role.title,
-                    value: role.id
+                choices: roles.map(roles => ({
+                    name: roles.title,
+                    value: roles.id
                 }))
             },
             {
@@ -105,7 +105,7 @@ const addADepartment = async () => {
             name: data.name,
         })
 
-        console.log(`\n${res.affectedRows} Department added to table.\n`);
+        console.log(`\n${res.affectedRows} Department added.\n`);
         start();
 
     } catch (err) {
@@ -113,3 +113,41 @@ const addADepartment = async () => {
     }
 
 };
+
+const addARole = async () => {
+    try {
+        const department = await connection.query("SELECT * FROM departments");
+    
+    const data = await inquirer.prompt([
+        {
+            type: "input",
+            name: "title",
+            message: "Enter the title of the roll you want to add."
+        },
+        {
+            type: "input",
+            name: "salary",
+            message: "Enter the salary of the role using two decimal places"
+        },
+        {
+            type: "rawlist",
+            name: "depart_id",
+            message: "Select which department the role belongs to",
+            choices: departments.map(departments => ({
+                name: departments.name,
+                value: departments.id
+            }))
+        },
+    ])
+        const res = await connection.query("INSERT INTO roles SET ?", {
+                title: data.title,
+                salary: data.salary,
+                departments_id: data.depart_id,
+            });
+            
+                console.log(`\n${res.affectedRows} Role added.\n`);
+                start();
+    
+} catch(err) {throw err};
+};
+
