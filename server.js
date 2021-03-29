@@ -23,7 +23,7 @@ const start = () => {
                     addAnEmployee();
                     break;
                 case "Add a Department":
-                    addDepartment();
+                    addADepartment();
                     break;
                 case "Add a Role":
                     addRole();
@@ -89,6 +89,27 @@ const addAnEmployee = async () => {
         start();
     } catch (err) {
         throw err
+    }
+
+};
+
+const addADepartment = async () => {
+    try {
+        const data = await inquirer.prompt([{
+            type: "input",
+            name: "name",
+            message: "Enter the department name you would like to add."
+        }]);
+        const res = await connection.query("INSERT INTO departments SET ?", {
+
+            name: data.name,
+        })
+
+        console.log(`\n${res.affectedRows} Department added to table.\n`);
+        start();
+
+    } catch (err) {
+        throw err;
     }
 
 };
