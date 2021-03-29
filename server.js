@@ -20,7 +20,7 @@ const start = () => {
         .then((answer) => {
             switch (answer.method) {
                 case "Add Employee":
-                    addEmployee();
+                    addAnEmployee();
                     break;
                 case "Add a Department":
                     addDepartment();
@@ -46,4 +46,49 @@ const start = () => {
 
             }
         });
+};
+
+const addAnEmployee = async () => {
+    try {
+        const roles = await connection.query("SELECT * FROM roles")
+        const manager = await connection.query("SELECT * FROM employees manager")
+
+        const data = await inquirer.prompt([{
+                type: "input",
+                name: "first_name",
+                message: "What is the employee's first name?"
+            },
+            {
+                type: "input",
+                name: "last_name",
+                message: "What is the employee's last name?"
+            },
+            {
+                type: "rawlist",
+                name: "role_id",
+                message: "What is the Employee's role?",
+                choices: roles.map(role => ({
+                    name: role.title,
+                    value: role.id
+                }))
+            },
+            {
+                type: "rawlist",
+                name: "manager_id",
+                message: "Enter the Employee's Manager.",
+                choices: manager.map(manager => ({
+                    name: manager.first_name + " " + manager.last_name,
+                    value: manager.id
+                }))
+            },
+        ])
+
+        const res = await connection.query("INSERT INTO employees SET ?", data)
+
+        console.log(`${res.affectedRows} Employee has been added.`);
+        start();
+    } catch (err) {
+        throw err
+    }
+
 };
