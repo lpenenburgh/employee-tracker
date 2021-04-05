@@ -204,3 +204,11 @@ const viewDepartments = () => {
         start();
     })
 };
+
+const viewRoles = () => {
+    connection.query("SELECT role.id, role.title, role.salary, department.name as department_name FROM role LEFT JOIN department ON role.department_id = department.id ORDER BY department_name", (err, data) => {
+        if (err) throw err;
+        console.table(data)
+        start();
+    })
+};

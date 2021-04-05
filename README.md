@@ -7,6 +7,7 @@ A node, inquirer, and MySQL application that allows the user to be able to view 
 This application requires the user to have node.js installed to work. Next, the user needs to install the app's packages in the command line in their terminal using 'npm install'. The application runs using the server.js file.
 
 ## Usage
+To use this app, first the user must create and populate the database using MySQL Workbench. To do this, use the 'schema.sql' file to create, and 'seeds.sql' to populate the table. The user can then run the program on the 'server.js' file in their node terminal.
 
 ## Badges
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
