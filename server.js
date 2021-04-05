@@ -32,7 +32,7 @@ const start = () => {
                     updateEmployee();
                     break;
                 case "View All Employees":
-                    viewAllEmployees();
+                    viewEmployees();
                     break;
                 case "View All Departments":
                     viewAllDepartments();
@@ -85,7 +85,7 @@ const addAnEmployee = async () => {
 
         const res = await connection.query("INSERT INTO employees SET ?", data)
 
-        console.log(`${res.affectedRows} Employee has been added.`);
+        console.log(`${res.affectedRows} New Employee added.`);
         start();
     } catch (err) {
         throw err
@@ -151,3 +151,48 @@ const addARole = async () => {
 } catch(err) {throw err};
 };
 
+
+const updateEmployee = async () => {
+    const employee = await connection.query("SELECT * FROM employee");
+    const role = await connection.query("SELECT * FROM role");
+
+    const data = await inquirer.prompt([{
+            type: "list",
+            name: "employeeToUpd",
+            message: "Pick an Employee to update?",
+            choices: employee.map(employee => ({
+                name: employee.first_name + " " + employee.last_name,
+                value: employee.id
+            }))
+        },
+        {
+            type: "rawlist",
+            name: "newRole",
+            message: "What is the Employee's role now?",
+            choices: role.map(role => ({
+                name: role.title,
+                value: role.id
+            }))
+        }
+
+    ])
+    const res = await connection.query("UPDATE employee SET ? WHERE ?", [{
+            role_id: data.newRole
+        },
+        {
+            id: data.chosenEmployee
+        }
+    ])
+    console.log(`\n${res.affectedRows} Employee has been updated.\n`);
+    start();
+};
+
+const viewEmployees = async () => {
+    try {
+        const data = await connection.query("SELECT CONCAT(employee.first_name, ' ', employee.last_name) AS employee, role.title, role.salary, department.name as department_name,  CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role ON employee.role_id = role.id LEFT JOIN department ON role.department_id = department.id LEFT JOIN employee manager ON manager.id = employee.manager_id ORDER BY employee.last_name")
+        console.table(data)
+        start();
+    } catch (err) {
+        throw err;
+    }
+};
