@@ -35,10 +35,10 @@ const start = () => {
                     viewEmployees();
                     break;
                 case "View All Departments":
-                    viewAllDepartments();
+                    viewDepartments();
                     break;
                 case "View All Roles":
-                    viewAllRoles();
+                    viewRoles();
                     break;
                 default:
                     connection.end();
@@ -195,4 +195,12 @@ const viewEmployees = async () => {
     } catch (err) {
         throw err;
     }
+};
+
+const viewDepartments = () => {
+    connection.query("SELECT * FROM department", (err, data) => {
+        if (err) throw err;
+        console.table(data)
+        start();
+    })
 };
