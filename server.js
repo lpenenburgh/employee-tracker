@@ -1,16 +1,25 @@
-//const mysql = require('mysql');
-const inquirer = require('inquirer');
-const cTable = require('console.table');
 
-//moving connection to a a connection.js file
+const util = require("util");
+const mysql = require("mysql");
+const inquirer = require("inquirer");
 
-// const connection = mysql.createConnection({
-//     host: 'localhost',
-//     port: 3306,
-//     user: 'root',
-//     password: 'root',
-//     database: 'employees_db',
-// });
+
+ const connection = mysql.createConnection({
+     host: 'localhost',
+    port: 3306,
+    user: 'root',
+    password: 'root',
+     database: 'employees_db',
+ });
+
+//added call to start function
+connection.connect((err) => {
+    if (err) throw err;
+    start();
+});
+
+//added to be able to use promises/async/await
+connection.query = util.promisify(connection.query);
 
 const start = () => {
     inquirer.prompt({
@@ -52,8 +61,9 @@ const start = () => {
 
 const addAnEmployee = async () => {
     try {
-        const roles = await connection.query("SELECT * FROM roles")
-        const manager = await connection.query("SELECT * FROM employees manager")
+        //changed query selectors to match schema names/also so I can tell the variable names apart from the tables
+        const roles = await connection.query("SELECT * FROM role")
+        const manager = await connection.query("SELECT * FROM employee manager")
 
         const data = await inquirer.prompt([{
                 type: "input",
@@ -69,9 +79,9 @@ const addAnEmployee = async () => {
                 type: "rawlist",
                 name: "role_id",
                 message: "What is the Employee's role?",
-                choices: roles.map(roles => ({
-                    name: roles.title,
-                    value: roles.id
+                choices: roles.map(role => ({
+                    name: role.title,
+                    value: role.id
                 }))
             },
             {
@@ -85,7 +95,7 @@ const addAnEmployee = async () => {
             },
         ])
 
-        const res = await connection.query("INSERT INTO employees SET ?", data)
+        const res = await connection.query("INSERT INTO employee SET ?", data)
 
         console.log(`${res.affectedRows} New Employee added.`);
         start();
@@ -102,7 +112,7 @@ const addADepartment = async () => {
             name: "name",
             message: "Enter the department name you would like to add."
         }]);
-        const res = await connection.query("INSERT INTO departments SET ?", {
+        const res = await connection.query("INSERT INTO department SET ?", {
 
             name: data.name,
         })
@@ -118,7 +128,7 @@ const addADepartment = async () => {
 
 const addARole = async () => {
     try {
-        const department = await connection.query("SELECT * FROM departments");
+        const department = await connection.query("SELECT * FROM department");
     
     const data = await inquirer.prompt([
         {
@@ -135,13 +145,13 @@ const addARole = async () => {
             type: "rawlist",
             name: "depart_id",
             message: "Select which department the role belongs to",
-            choices: departments.map(departments => ({
-                name: departments.name,
-                value: departments.id
+            choices: department.map(department => ({
+                name: department.name,
+                value: department.id
             }))
         },
     ])
-        const res = await connection.query("INSERT INTO roles SET ?", {
+        const res = await connection.query("INSERT INTO role SET ?", {
                 title: data.title,
                 salary: data.salary,
                 departments_id: data.depart_id,
