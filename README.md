@@ -1,7 +1,13 @@
 # employee-tracker
 
+![](Employee-Tracker.gif)
+
 ## Description
 A node, inquirer, and MySQL application that allows the user to be able to view and manage data pertaining to the employees, roles, and departments of a company
+
+
+
+
 
 ## Installation
 This application requires the user to have node.js installed to work. Next, the user needs to install the app's packages in the command line in their terminal using 'npm install'. The application runs using the server.js file.
